@@ -1,3 +1,4 @@
+
 class App extends React.Component {
   constructor() {
     super()
@@ -9,6 +10,7 @@ class App extends React.Component {
     this.onCheckoutClick = this.onCheckoutClick.bind(this)
     this.onCreateAccountClick = this.onCreateAccountClick.bind(this)
     this.onShippingClick = this.onShippingClick.bind(this)
+    this.onPaymentClick = this.onPaymentClick.bind(this)
  }
 
  onCheckoutClick(e) {
@@ -23,6 +25,15 @@ class App extends React.Component {
    this.setState({
      level: 2
    })
+
+   var form = document.querySelector("form");
+
+    for (var i = 0; i < form.elements.length; i++) {
+      if (form.elements[i].name !== '' || form.elements[i].value !== '') {
+        this.userInfo[form.elements[i].name] = form.elements[i].value;
+      }
+    }
+    console.log(this.userInfo)
  }
 
  onShippingClick(e) {
@@ -30,7 +41,41 @@ class App extends React.Component {
    this.setState({
      level: 3
    })
+
+   var form = document.querySelector("form");
+
+    for (var i = 0; i < form.elements.length; i++) {
+      if (form.elements[i].name !== '' || form.elements[i].value !== '') {
+        this.userInfo[form.elements[i].name] = form.elements[i].value;
+      }
+    }
+    console.log(this.userInfo)
  }
+
+ onPaymentClick(e) {
+  e.preventDefault();
+  this.setState({
+    level: 4
+  })
+  var form = document.querySelector("form");
+
+  for (var i = 0; i < form.elements.length; i++) {
+    if (form.elements[i].name !== '' || form.elements[i].value !== '') {
+      this.userInfo[form.elements[i].name] = form.elements[i].value;
+    }
+}
+
+console.log(this.userInfo)
+
+ $.ajax({
+          method: 'post',
+          url: '/account',
+          data: this.userInfo,
+        }).done(data => {
+          console.log(data);
+        });
+
+}
 
  render() {
    if (this.state.level === 0) {
@@ -69,8 +114,12 @@ class App extends React.Component {
       <div>Expiration Date: <input type="date" placeholder="Exp Date" name="expdate"></input></div>
       <div>CVV: <input type="number" placeholder="CVV" name="cvv"></input></div>
       <div>Zip Code: <input type="number" placeholder="Zip Code" name="billzip"></input></div>
-      <button onClick={this.onShippingClick}>Submit Payment Info</button>
+      <button onClick={this.onPaymentClick}>Submit Payment Info</button>
       </form>
+     )
+   } else if (this.state.level === 4) {
+     return (
+       <div>Confirm Info</div>
      )
    }
  }
