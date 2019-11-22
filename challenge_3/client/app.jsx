@@ -33,7 +33,7 @@ class App extends React.Component {
         this.userInfo[form.elements[i].name] = form.elements[i].value;
       }
     }
-    console.log(this.userInfo)
+    
  }
 
  onShippingClick(e) {
@@ -49,14 +49,12 @@ class App extends React.Component {
         this.userInfo[form.elements[i].name] = form.elements[i].value;
       }
     }
-    console.log(this.userInfo)
+
  }
 
  onPaymentClick(e) {
   e.preventDefault();
-  this.setState({
-    level: 4
-  })
+
   var form = document.querySelector("form");
 
   for (var i = 0; i < form.elements.length; i++) {
@@ -65,14 +63,21 @@ class App extends React.Component {
     }
 }
 
-console.log(this.userInfo)
-
  $.ajax({
           method: 'post',
           url: '/account',
           data: this.userInfo,
-        }).done(data => {
-          console.log(data);
+        }).done(result => {
+          var array = [];
+          for (var key in result[0]) {
+              var tuple = [];
+              tuple.push(key, result[0][key]);
+              array.push(tuple);
+            }
+            this.userInfo = array;
+            this.setState({
+              level: 4
+            })
         });
 
 }
@@ -119,7 +124,17 @@ console.log(this.userInfo)
      )
    } else if (this.state.level === 4) {
      return (
-       <div>Confirm Info</div>
+       <div>
+         <div>Confirm Info</div> 
+         {this.userInfo.map((info) => {
+           if (info[0] !== 'createdAt' || info[0] !== 'updatedAt'){
+             return(
+               <div>{info[0]}: {info[1]}</div>
+             )
+           }
+         })}
+       </div>
+       
      )
    }
  }
